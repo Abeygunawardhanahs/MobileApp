@@ -43,8 +43,6 @@ export default class CustomInput extends Component {
           paddingLeft:30,
           marginBottom:40,
 
-
-
         }} 
         secureTextEntry={true}
         placeholder="Enter your Password"
