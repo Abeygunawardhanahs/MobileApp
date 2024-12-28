@@ -9,7 +9,7 @@ import LoginPage from './src/Compnents/LoginPage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import SongDetails from './src/Compnents/SongDetails';
-
+import LyricsPage from './src/Compnents/LyricsPage';
 const Stack = createStackNavigator();
 
 export default function App() {
@@ -25,6 +25,7 @@ export default function App() {
         <Stack.Screen name="SignUpPage" component={SignUpPage} />
         <Stack.Screen name="HomePage" component={HomePage} />
         <Stack.Screen name="SongDetails" component={SongDetails} />
+        <Stack.Screen name="LyricsPage" component={LyricsPage} options={{ title: 'Song Lyrics' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
