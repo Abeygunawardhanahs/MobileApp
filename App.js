@@ -8,6 +8,7 @@ import CustomInput from './src/Compnents/CustomInput/CustomInput';
 import LoginPage from './src/Compnents/LoginPage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import SongDetails from './src/Compnents/SongDetails';
 
 const Stack = createStackNavigator();
 
@@ -23,6 +24,7 @@ export default function App() {
         <Stack.Screen name="LoginPage" component={LoginPage} />
         <Stack.Screen name="SignUpPage" component={SignUpPage} />
         <Stack.Screen name="HomePage" component={HomePage} />
+        <Stack.Screen name="SongDetails" component={SongDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );
