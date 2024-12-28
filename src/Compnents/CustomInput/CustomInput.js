@@ -37,12 +37,12 @@ export default class CustomInput extends Component {
           color:"black",
           backgroundColor:"#e0ffff",
           width: 300,
-          height: 50,
+          height: 50, 
           borderRadius:20,
           marginTop:20,
           paddingLeft:30,
           marginBottom:40,
-
+          
         }} 
         secureTextEntry={true}
         placeholder="Enter your Password"
