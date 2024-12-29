@@ -7,7 +7,7 @@ const songs = [
   { id: '1', title: 'Imagine', lyrics: 'Imagine there\'s no heaven, It\'s easy if you try...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', language: 'english' },
   { id: '2', title: 'Let it Be', lyrics: 'When I find myself in times of trouble, Mother Mary comes to me...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', language: 'english' },
   { id: '3', title: 'Yesterday', lyrics: 'Yesterday, all my troubles seemed so far away...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', language: 'english' },
-  { id: '4', title: 'Shape of You', lyrics: 'The club isn\'t the best place to find a lover, so the bar is where I go...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3', language: 'english' },
+  { id: '4', title: 'Shape of You', lyrics: 'The club isn\'t the best place to find a lover, so the bar is where I go...', audio: 'https://drive.google.com/uc?export=download&id=1zw1BdHPCrubCQytZ-rZAOh5PXYf10oQf', language: 'english' },
   { id: '5', title: 'Blinding Lights', lyrics: 'I said, ooh, I\'m blinded by the lights...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', language: 'english' },
   { id: '6', title: 'Rolling in the Deep', lyrics: 'We could have had it all...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3', language: 'english' },
   { id: '7', title: 'Someone Like You', lyrics: 'I heard that you\'re settled down, that you found a girl and you\'re married now...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3', language: 'english' },
@@ -118,10 +118,10 @@ export default function HomePage({ route, navigation }) {
     <View style={styles.container}>
       <Text style={styles.welcomeText}>Welcome, {username}!</Text>
 
-      <TouchableOpacity style={styles.editButton} onPress={handleEditDetails}>
+      {/* <TouchableOpacity style={styles.editButton} onPress={handleEditDetails}>
         <Text style={styles.buttonText}>Edit Details</Text>
-      </TouchableOpacity>
-
+      </TouchableOpacity> */}
+  
       {/* Language Filter Buttons */}
       <View style={styles.languageButtonGroup}>
         <TouchableOpacity style={styles.languageButton} onPress={() => handleFilterSongs('english')}>
