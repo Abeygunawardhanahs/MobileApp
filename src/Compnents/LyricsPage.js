@@ -4,7 +4,7 @@ import { FontAwesome } from '@expo/vector-icons'; // For play and pause icons
 import { Audio } from 'expo-av';
 
 export const songLyrics = {
-  // 🎵 English Songs
+  // English Songs
   '1': {
     lyrics: `Imagine there's no heaven
 It's easy if you try
@@ -248,7 +248,7 @@ audio: 'https://drive.google.com/uc?export=download&id=1zw1BdHPCrubCQytZ-rZAOh5P
 
   },
 
-  // 🎵 Sinhala Songs
+  //  Sinhala Songs
   '11': {
     lyrics: `සිතුම් බොඳවී යන, මනසේ...
 නින්දෙන් අවදිවූ, ආලෝකය...`,
@@ -266,7 +266,7 @@ export default function LyricsPage({ route }) {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // 🎧 Play Audio
+  //  Play Audio
   const handlePlayAudio = async () => {
     try {
       if (sound) {
@@ -281,7 +281,7 @@ export default function LyricsPage({ route }) {
     }
   };
 
-  // ⏸️ Pause Audio
+  //  Pause Audio
   const handlePauseAudio = async () => {
     try {
       if (sound && isPlaying) {
@@ -323,7 +323,7 @@ export default function LyricsPage({ route }) {
   );
 }
 
-// 🎨 Styles
+//  Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,

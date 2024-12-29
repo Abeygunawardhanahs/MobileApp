@@ -7,7 +7,7 @@ export default function SongDetails({ route, navigation }) {
   const [sound, setSound] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  // 🎵 Play Audio
+  // Play Audio
   const handlePlayAudio = async (audioUrl) => {
     try {
       if (sound) {
@@ -23,7 +23,7 @@ export default function SongDetails({ route, navigation }) {
     }
   };
 
-  // ⏸️ Pause Audio
+  //  Pause Audio
   const handlePauseAudio = async () => {
     try {
       if (sound && isPlaying) {

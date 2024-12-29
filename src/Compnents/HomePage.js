@@ -40,7 +40,7 @@ export default function HomePage({ route, navigation }) {
     if (route?.params?.userName) {
       setUsername(route.params.userName);
     } else {
-      setUsername('Hasara');
+      setUsername(' Hasara ');
     }
   }, [route?.params?.userName]);
 
@@ -56,7 +56,7 @@ export default function HomePage({ route, navigation }) {
   const handleSongPress = (song) => {
     navigation.navigate('LyricsPage', { songId: song.id, songTitle: song.title });  };
 
-  // 🎵 Play Audio
+  // Play Audio
   const handlePlayAudio = async (audioUrl) => {
     try {
       if (sound) {
@@ -72,7 +72,7 @@ export default function HomePage({ route, navigation }) {
     }
   };
 
-  // ⏸️ Pause Audio
+  // Pause Audio
   const handlePauseAudio = async () => {
     try {
       if (sound && isPlaying) {
