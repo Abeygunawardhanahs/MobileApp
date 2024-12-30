@@ -142,7 +142,8 @@ export default function LoginPage() {
     setUsername(username);
 
     // Navigate to the HomePage
-    navigation.navigate('HomePage');
+    navigation.navigate('HomePage', { userName: username });
+
   };
 
   return (

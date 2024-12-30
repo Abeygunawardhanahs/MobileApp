@@ -1,240 +1,228 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Alert } from 'react-native';
-import { Audio } from 'expo-av';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, TextInput, TouchableOpacity, ScrollView, Alert, StatusBar } from 'react-native';
 
-const songs = [
-  // English Songs
-  { id: '1', title: 'Imagine', lyrics: 'Imagine there\'s no heaven, It\'s easy if you try...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3', language: 'english' },
-  { id: '2', title: 'Let it Be', lyrics: 'When I find myself in times of trouble, Mother Mary comes to me...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3', language: 'english' },
-  { id: '3', title: 'Yesterday', lyrics: 'Yesterday, all my troubles seemed so far away...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3', language: 'english' },
-  { id: '4', title: 'Shape of You', lyrics: 'The club isn\'t the best place to find a lover, so the bar is where I go...', audio: 'https://drive.google.com/uc?export=download&id=1zw1BdHPCrubCQytZ-rZAOh5PXYf10oQf', language: 'english' },
-  { id: '5', title: 'Blinding Lights', lyrics: 'I said, ooh, I\'m blinded by the lights...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3', language: 'english' },
-  { id: '6', title: 'Rolling in the Deep', lyrics: 'We could have had it all...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3', language: 'english' },
-  { id: '7', title: 'Someone Like You', lyrics: 'I heard that you\'re settled down, that you found a girl and you\'re married now...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3', language: 'english' },
-  { id: '8', title: 'Uptown Funk', lyrics: 'This hit, that ice cold, Michelle Pfeiffer, that white gold...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3', language: 'english' },
-  { id: '9', title: 'All of Me', lyrics: 'Cause all of me loves all of you...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3', language: 'english' },
-  { id: '10', title: 'Perfect', lyrics: 'I found a love, to carry more than just my secrets...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3', language: 'english' },
+const Home = ({ route, navigation }) => {
+  const { userName } = route.params;
+  const [data, setData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('Music');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [totcount, setTotcount] = useState(0);
+  const [imageStatus, setImageStatus] = useState({});
 
-  // Sinhala Songs
-  { id: '11', title: 'සිතුම්', lyrics: 'සිතුම් බොඳවී යන, මනසේ...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3', language: 'sinhala' },
-  { id: '12', title: 'පසුබැසී', lyrics: 'පසුබැසී, හැමදාමත්, හෝදවාගන්න...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3', language: 'sinhala' },
-  { id: '13', title: 'ඔබේ ගීතය', lyrics: 'ඔබේ ගීතය මගේ හදවතක...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3', language: 'sinhala' },
-  { id: '14', title: 'සමරන්න', lyrics: 'සමරන්න, අමතක නොකරන්න...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-14.mp3', language: 'sinhala' },
-  { id: '15', title: 'අද දවස්වල', lyrics: 'අද දවස්වල ජීවත් වීම...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-15.mp3', language: 'sinhala' },
-  { id: '16', title: 'තනිවී', lyrics: 'තනිවී සිටිනුම, අසරණ බව...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-16.mp3', language: 'sinhala' },
-  { id: '17', title: 'ආලෝකය', lyrics: 'ආලෝකය ඔබේ මනසේ එනවා...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-17.mp3', language: 'sinhala' },
-  { id: '18', title: 'මට තේරෙයි', lyrics: 'මට තේරෙයි, ඔබේ අඳුරු ඇස්...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-18.mp3', language: 'sinhala' },
-  { id: '19', title: 'මහ හතුරු', lyrics: 'මහ හතුරු මිතුරන් මගේ...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-19.mp3', language: 'sinhala' },
-  { id: '20', title: 'ගිනි මාලිගාව', lyrics: 'ගිනි මාලිගාව අළුත්කම...', audio: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-20.mp3', language: 'sinhala' }
-];
+  const fetchImages = async (query) => {
+    setLoading(true);
+    setTotcount(0);
+    setError(null);
+    try {
+      if (searchTerm.trim() !== "") {
+        const response = await fetch(
+          `https://api.unsplash.com/search/photos?query=${query}%20music&client_id=pao1i41sEZkTiD0pbmXVPEKuWnHVIn_zw2ixY8nFNZs`
+        );
+        const result = await response.json();
+        setData(result.results);
 
-export default function HomePage({ route, navigation }) {
-  const [username, setUsername] = useState('Guest');
-  const [searchText, setSearchText] = useState('');
-  const [filteredSongs, setFilteredSongs] = useState(songs);
-  const [sound, setSound] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [songLanguage, setSongLanguage] = useState('all');
+        const initialStatus = {};
+        result.results.forEach((item) => {
+          initialStatus[item.id] = 'Inactive';
+        });
+        setImageStatus(initialStatus);
+      } else {
+        Alert.alert("Enter the search field...!");
+        setSearchTerm("music");
+      }
+    } catch (error) {
+      setError('Failed to fetch images. Please try again.');
+      console.error('Error fetching images:', error);
+    }
+    setLoading(false);
+  };
 
   useEffect(() => {
-    if (route?.params?.userName) {
-      setUsername(route.params.userName);
-    } else {
-      setUsername(' Hasara ');
-    }
-  }, [route?.params?.userName]);
+    fetchImages(searchTerm);
+  }, []);
 
-  const handleSearch = (text) => {
-    setSearchText(text);
-    const filtered = songs.filter((song) =>
-      song.title.toLowerCase().includes(text.toLowerCase()) &&
-      (songLanguage === 'all' || song.language === songLanguage)
-    );
-    setFilteredSongs(filtered);
+  const handleImagePress = (id) => {
+    setImageStatus((prevStatus) => ({
+      ...prevStatus,
+      [id]: 'Active',
+    }));
+    setTotcount((prev) => prev + 1);
   };
 
-  const handleSongPress = (song) => {
-    navigation.navigate('LyricsPage', { songId: song.id, songTitle: song.title });  };
-
-  // Play Audio
-  const handlePlayAudio = async (audioUrl) => {
-    try {
-      if (sound) {
-        await sound.unloadAsync();
-      }
-      const { sound: newSound } = await Audio.Sound.createAsync({ uri: audioUrl });
-      setSound(newSound);
-      await newSound.playAsync();
-      setIsPlaying(true);
-    } catch (error) {
-      console.error('Error playing sound:', error);
-      Alert.alert('Playback Error', 'Unable to play the selected song.');
-    }
-  };
-
-  // Pause Audio
-  const handlePauseAudio = async () => {
-    try {
-      if (sound && isPlaying) {
-        await sound.pauseAsync();
-        setIsPlaying(false);
-      }
-    } catch (error) {
-      console.error('Error pausing sound:', error);
-      Alert.alert('Playback Error', 'Unable to pause the song.');
-    }
-  };
-
-  const renderSongItem = ({ item }) => (
-    <View style={styles.songItemContainer}>
-      <TouchableOpacity onPress={() => handleSongPress(item)}>
-        <Text style={styles.songTitle}>{item.title}</Text>
-      </TouchableOpacity>
-      <View style={styles.buttonGroup}>
-        <TouchableOpacity style={styles.playButton} onPress={() => handlePlayAudio(item.audio)}>
-          <Text style={styles.buttonText}>Play</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.pauseButton} onPress={handlePauseAudio}>
-          <Text style={styles.buttonText}>Pause</Text>
-        </TouchableOpacity>
+  const renderItem = (item) => (
+    <TouchableOpacity
+      accessible
+      accessibilityLabel={`Image touched ${item.id || 0} times`}
+      onPress={() => handleImagePress(item.id)}
+    >
+      <View style={styles.card}>
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: item.urls.regular }} style={styles.image} />
+        </View>
+        <Text style={styles.title}>{item.alt_description || 'No Description'}</Text>
+        <Text style={styles.author}>Photo by {item.user.name}</Text>
+        <Text style={styles.status}>Status: {imageStatus[item.id]}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
-
-  // Language filter buttons
-  const handleFilterSongs = (language) => {
-    setSongLanguage(language);
-    const filtered = songs.filter((song) =>
-      song.language === language || language === 'all'
-    );
-    setFilteredSongs(filtered);
-  };
-
-  const handleEditDetails = () => {
-    navigation.navigate('EditDetails', { username });
-  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.welcomeText}>Welcome, {username}!</Text>
-
-      {/* <TouchableOpacity style={styles.editButton} onPress={handleEditDetails}>
-        <Text style={styles.buttonText}>Edit Details</Text>
-      </TouchableOpacity> */}
-  
-      {/* Language Filter Buttons */}
-      <View style={styles.languageButtonGroup}>
-        <TouchableOpacity style={styles.languageButton} onPress={() => handleFilterSongs('english')}>
-          <Text style={styles.buttonText}>English</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.languageButton} onPress={() => handleFilterSongs('sinhala')}>
-          <Text style={styles.buttonText}>Sinhala</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.languageButton} onPress={() => handleFilterSongs('all')}>
-          <Text style={styles.buttonText}>All</Text>
+      <StatusBar barStyle="light-content" backgroundColor="#121212" />
+      <Text style={styles.fonttop}>Welcome {userName}!</Text>
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search for images"
+          value={searchTerm}
+          onChangeText={(text) => setSearchTerm(text)}
+        />
+        <TouchableOpacity style={styles.searchButton} onPress={() => fetchImages(searchTerm)}>
+          <Text style={styles.searchButtonText}>Search</Text>
         </TouchableOpacity>
       </View>
 
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search songs..."
-        placeholderTextColor="#BBB"
-        value={searchText}
-        onChangeText={handleSearch}
-      />
+      {error && <Text style={styles.errorText}>{error}</Text>}
+      {loading ? (
+        <Text style={styles.loadingText}>Loading...</Text>
+      ) : data.length > 0 ? (
+        <ScrollView contentContainerStyle={styles.listContainer}>
+          {data.map((item) => (
+            <View key={item.id}>
+              {renderItem(item)}
+            </View>
+          ))}
+        </ScrollView>
+      ) : (
+        <Text style={styles.noDataText}>No images found.</Text>
+      )}
 
-      <Text style={styles.title}>Music Collection</Text>
-      <FlatList
-        data={filteredSongs}
-        keyExtractor={(item) => item.id}
-        renderItem={renderSongItem}
-      />
+      <View style={styles.footerContainer}>
+        <Text style={styles.fontbottom}>{totcount}</Text>
+      </View>
     </View>
   );
-}
+};
 
-// Styles (add new styles for the language filter buttons)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E1E2C',
-    paddingTop: 40,
+    backgroundColor: '#121212',
     paddingHorizontal: 20,
   },
-  welcomeText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFF',
-    marginBottom: 20,
-  },
-  editButton: {
-    backgroundColor: '#FF6F61',
-    paddingVertical: 10,
-    marginVertical: 10,
-    borderRadius: 25,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  languageButtonGroup: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    justifyContent: 'space-evenly',
-  },
-  languageButton: {
-    backgroundColor: '#2C2C3A',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 25,
-  },
-  searchBar: {
-    backgroundColor: '#2C2C3A',
-    color: '#FFF',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    height: 40,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  fonttop: {
+    fontSize: 20,
     color: '#FFF',
     textAlign: 'center',
-    marginBottom: 20,
-  },
-  songItemContainer: {
-    backgroundColor: '#2C2C3A',
-    marginBottom: 15,
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  songTitle: {
-    fontSize: 18,
-    color: '#FFF',
     fontWeight: 'bold',
-    flex: 1,
+    margin: 20,
+    shadowColor: '#FF6F61',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
+    elevation: 5,
   },
-  buttonGroup: {
+  searchContainer: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
+    marginHorizontal: 10,
+    marginBottom: 10,
   },
-  playButton: {
-    backgroundColor: '#FF6F61',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+  searchInput: {
+    flex: 1,
+    height: 40,
+    color: '#fff',
+    borderColor: 'rgba(255, 111, 97, 0.5)',
+    borderWidth: 1,
     borderRadius: 5,
+    paddingHorizontal: 10,
   },
-  pauseButton: {
-    backgroundColor: '#FFD700',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 5,
+  searchButton: {
     marginLeft: 10,
+    backgroundColor: 'rgba(255, 111, 97, 0.8)',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 5,
+  },
+  searchButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    textShadowColor: 'black',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  
+  listContainer: {
+    paddingHorizontal: 10,
+  },
+  card: {
+    marginBottom: 15,
+    padding: 3,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    backgroundColor: '#FFF',
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  fontbottom: {
+    position: 'absolute',
+    bottom: 10,
+    left: 0,
+    right: 0,
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: 'bold',
+    backgroundColor: 'rgba(255, 111, 97, 0.8)',
+    paddingVertical: 5,
+  
+    justifyContent: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  author: {
+    fontSize: 14,
+    color: '#555',
+  },
+  status: {
+    fontSize: 14,
+    color: '#FF6F61',
+    marginTop: 5,
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 18,
+    color: '#555',
+  },
+  errorText: {
+    textAlign: 'center',
+    color: 'red',
+    fontSize: 18,
+    marginTop: 20,
+  },
+  noDataText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#555',
+    marginTop: 20,
+  },
+  footerContainer: {
+    marginBottom: 20,
+    width: '100%',
+    textAlign: 'right',
   },
 });
+
+export default Home;
